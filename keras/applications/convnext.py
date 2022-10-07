@@ -220,8 +220,12 @@ class LayerScale(layers.Layer):
         self.gamma = tf.Variable(
             self.init_values * tf.ones((self.projection_dim,))
         )
+        if self.gamma.dtype.base_dtype != self._compute_dtype_object.base_dtype:
+            self.gamma = tf.cast(self.gamma, dtype=self._compute_dtype_object)
 
     def call(self, x):
+        if x.dtype.base_dtype != self._compute_dtype_object.base_dtype:
+            x = tf.cast(x, dtype=self._compute_dtype_object)
         return x * self.gamma
 
     def get_config(self):
